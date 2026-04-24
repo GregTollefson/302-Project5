@@ -1,0 +1,20 @@
+# Build artifacts
+/build/
+*.o
+*.out
+*.exe
+
+# VSCode
+.vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# JetBrains junk
+.idea/
+
+# Unneeded docs
+coding_standards.md
+project_05_rubric.md
+project_05.md
