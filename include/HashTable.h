@@ -19,6 +19,8 @@
 #include <vector>
 #include <utility>
 #include <functional>
+#include <list>  // implements the doubly linked list 
+#include <stdexcept> // for error reporting (if needed)
 
 template<class K, class V>
 class HashTable : public HashTableInterface<K, V>
@@ -36,6 +38,11 @@ private:
     // Think about what containers make sense at each level.
     // Your choice here is the most important design decision
     // in the project. Document it in Design_Decisions.md.
+    std::vector<std::list<std::pair<K, V>>> table_;
+    int tableSize_;
+    int entryCount_;
+    std::function<int(const K&, int)> hashFn_;
+
 
 public:
 
@@ -55,7 +62,11 @@ public:
     //     hashFn_(key, tableSize_)
     // ---------------------------------------------------------
     HashTable(int tableSize,
-              std::function<int(const K&, int)> hashFn)
+              std::function<int(const K&, int)> hashFn) 
+              : table_(tableSize),
+                tableSize_(tableSize),
+                entryCount_(0),
+                hashFn_(hashFn)
     {
         // TODO: Initialize your internal structure and store the
         //       hash function for later use by insert() and find().
@@ -70,6 +81,9 @@ public:
         //       If you used only standard library containers
         //       with no raw pointers, this may be empty.
         //       Explain why in Design_Decisions.md.
+
+        //not needed, since std::vector and sdt::list manage their own memory! 
+        
     }
 
     // ---------------------------------------------------------
@@ -82,6 +96,19 @@ public:
     void insert(const K& key) override
     {
         // TODO: Implement.
+        int index = hashFn_(key, tableSize_);
+
+        for(auto& entry : table_[index])
+        {
+            if (entry.first == key)
+            {
+                entry.second++;
+                return;
+            }
+        }
+
+        table_[index].push_back(std::make_pair(key,1));
+        entryCount_++;
     }
 
     // ---------------------------------------------------------
@@ -93,7 +120,25 @@ public:
     V find(const K& key) const override
     {
         // TODO: Implement.
-        return V();
+        int index = hashFn_(key, tableSize_);
+
+        for (const auto& entry : table_[index])
+        {
+            if (entry.first == key)
+            {
+                return entry.second;
+            }
+        }
+        return 0;
+    }
+
+    // ---------------------------------------------------------
+    // getNumberOfEntries
+    //   Returns total number of unique keys in the table.
+    // ---------------------------------------------------------
+    int getNumberOfEntries() const
+    {
+        return entryCount_;
     }
 
     // ---------------------------------------------------------
@@ -104,7 +149,7 @@ public:
     double getLoadFactor() const override
     {
         // TODO: Implement.
-        return 0.0;
+        return static_cast<double>(entryCount_) / tableSize_;
     }
 
     // ---------------------------------------------------------
@@ -114,7 +159,16 @@ public:
     int getLongestChain() const override
     {
         // TODO: Implement.
-        return 0;
+        int longest = 0;
+
+        for (const auto& bucket : table_)
+        {
+            if(static_cast<int>(bucket.size()) > longest)
+            {
+                longest = static_cast<int>(bucket.size());
+            }
+        }
+        return longest;
     }
 
     // ---------------------------------------------------------
@@ -125,7 +179,21 @@ public:
     int getShortestChain() const override
     {
         // TODO: Implement.
-        return 0;
+        int shortest = entryCount_ + 1;
+
+        for (const auto& bucket : table_)
+        {
+            if (!bucket.empty() && static_cast<int>(bucket.size()) < shortest)
+            {
+                shortest = static_cast<int>(bucket.size());
+            }
+        }
+        if (shortest == entryCount_ + 1)
+        {
+            return 0;
+        }
+
+        return shortest;
     }
 
     // ---------------------------------------------------------
@@ -136,7 +204,22 @@ public:
     double getAverageChainLength() const override
     {
         // TODO: Implement.
-        return 0.0;
+        int nonEmptyBuckets = 0;
+        int totalChainLength = 0;
+        for (const auto& bucket : table_)
+        {
+            if (!bucket.empty())
+            {
+                nonEmptyBuckets++;
+                totalChainLength += static_cast<int>(bucket.size());
+            }
+        }
+
+        if (nonEmptyBuckets == 0)
+        {
+            return 0.0;
+        }
+        return static_cast<double>(totalChainLength) / nonEmptyBuckets;
     }
 
     // ---------------------------------------------------------
@@ -150,8 +233,19 @@ public:
         // TODO: Implement.
         //   Iterate every bucket, iterate every entry in each chain,
         //   and push each key-value pair into the result vector.
-        return {};
+        std::vector<std::pair<K, V>> entries;
+
+        for (const auto& bucket : table_)
+        {
+            for (const auto& entry : bucket)
+            {
+                entries.push_back(entry);
+            }
+        }
+        return entries;
     }
+
+
 
 }; // end HashTable
 

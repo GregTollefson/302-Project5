@@ -38,7 +38,15 @@ inline int modHash(const K& key, int tableSize)
     // TODO: Implement.
     //   Sum the ASCII value of each character in key.
     //   Return the sum mod tableSize.
-    return 0;
+    
+    int sum = 0;
+
+    for (char c : key)
+    {
+        sum += static_cast<unsigned char>(c);
+    }
+    
+    return sum % tableSize;
 }
 
 // ---------------------------------------------------------
@@ -79,7 +87,14 @@ inline int hornerHash(const K& key, int tableSize)
     //   For each character c in key (left to right):
     //     hash = (hash * 31 + ASCII value of c) % tableSize
     //   Return hash.
-    return 0;
+
+    int hash = 0;
+
+    for (char c : key)
+    {
+        hash = (hash * 31 + static_cast<unsigned char>(c)) % tableSize;
+    }
+    return hash;
 }
 
 #endif

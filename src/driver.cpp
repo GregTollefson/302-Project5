@@ -19,6 +19,7 @@
 // and printStep() to keep your output organized.
 
 #include "HashTable.h"
+#include "hashFunctions.h"
 #include "TextParser.h"
 #include <iostream>
 #include <string>
@@ -95,6 +96,17 @@ int main()
     //       If any test fails, print a message and return 1.
 
     printSection("Section 0: Hash Function Verification");
+    HashTable<std::string, int> table(TABLE_SIZE, modHash<std::string>);
+
+    table.insert("hello");
+    table.insert("hello");
+    table.insert("world");
+
+    std::cout << "hello: " << table.find("hello") << std::endl;
+    std::cout << "world: " << table.find("world") << std::endl;
+    std::cout << "missing: " << table.find("missing") << std::endl;
+
+    return 0;
 
     // TODO: Verify modHash for all 6 test words
 
