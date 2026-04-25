@@ -26,3 +26,7 @@ from both Section A and Section B. Do not just list them.
   argument.
 
 ## Interesting Observations
+
+- `HashTable()` not needed since std::vector and std::list manage their own memory
+
+
