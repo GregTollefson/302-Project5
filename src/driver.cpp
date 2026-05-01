@@ -268,7 +268,8 @@ int main()
    
 
     HashTable<std::string, int> modTable(TABLE_SIZE, modHash<std::string>);
-    int totalWords = loadText("texts/sicp.txt", modTable, 500);
+    //int totalWords = loadText("texts/sicp.txt", modTable, 500); // dev mode 
+    int totalWords = loadText("texts/sicp.txt", modTable); // test full dataset
 
     printStats("texts/sicp.txt", totalWords, modTable);
     printWordFrequencies(modTable,20);
@@ -286,7 +287,8 @@ int main()
     // TODO
     
     HashTable<std::string, int> hornerTable(TABLE_SIZE, hornerHash<std::string>);
-    int hornerTotalWords = loadText("texts/sicp.txt", hornerTable, 500);
+    //int hornerTotalWords = loadText("texts/sicp.txt", hornerTable, 500); //dev mode 
+    int hornerTotalWords = loadText("texts/sicp.txt", hornerTable); //test full dataset 
 
     printStats("texts/sicp.txt", hornerTotalWords, hornerTable);
     printWordFrequencies(hornerTable, 20);
