@@ -284,7 +284,12 @@ int main()
     printSection("Section B: Horner Hash Analysis");
 
     // TODO
+    
+    HashTable<std::string, int> hornerTable(TABLE_SIZE, hornerHash<std::string>);
+    int hornerTotalWords = loadText("texts/sicp.txt", hornerTable, 500);
 
+    printStats("texts/sicp.txt", hornerTotalWords, hornerTable);
+    printWordFrequencies(hornerTable, 20);
 
     std::cout << std::endl;
     std::cout << "============================================" << std::endl;
